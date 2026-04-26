@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful - JoBee</title>
+    <style>
+        :root {
+            --primary-dark: #333333;
+            --bg-light: #f9f9f9;
+            --white: #ffffff;
+            --text-main: #000000;
+            --text-muted: #666666;
+            --success-green: #4caf50;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .success-container {
+            background: var(--white);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            box-sizing: border-box;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            color: white;
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .success-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .id-display {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .id-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .id-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            letter-spacing: 2px;
+        }
+
+        .important-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .note-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .note-text {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .continue-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary-dark);
+            border: none;
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            box-sizing: border-box;
+            margin-top: 20px;
+        }
+
+        .continue-btn:hover {
+            background-color: #555555;
+            color: var(--white);
+        }
+
+        .user-role {
+            display: inline-block;
+            background: var(--primary-dark);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="success-container">
+    <div class="success-icon">✓</div>
+    <div class="user-role">{{ user_type|title }}</div>
+    <div class="success-title">Registration Successful!</div>
+    <div class="success-subtitle">Welcome to JoBee</div>
+
+    <div class="id-display">
+        <div class="id-label">Your {{ user_type|title }} ID</div>
+        <div class="id-value">{{ user_id }}</div>
+    </div>
+
+    <div class="important-note">
+        <div class="note-title">⚠️ Important Note</div>
+        <div class="note-text">
+            Please save your ID and password securely. You will need both to log in to your account and access the dashboard.
+        </div>
+    </div>
+
+    <a href="{% url login_url %}" class="continue-btn">
+        Continue to Login
+    </a>
+</div>
+
+</body>
+</html>

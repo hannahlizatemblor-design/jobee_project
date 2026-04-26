@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Sign Up - JoBee</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+            margin: 0;
+        }
+        .signup-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h1 { text-align: center; margin-bottom: 5px; font-size: 28px; color: #333; }
+        h3 { text-align: center; color: #666; margin-top: 0; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; font-weight: 800; }
+       
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: #333; }
+       
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #333;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+        }
+
+        input[readonly] {
+            background-color: #eee;
+            cursor: not-allowed;
+            color: #888;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            text-transform: uppercase;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: #444; }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #3a3838;
+        }
+
+        .toggle-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="signup-container">
+    <h1>Sign up</h1>
+    <h3>Administrator</h3>
+
+    <form method="POST" action="{% url 'admin_signup' %}">
+        {% csrf_token %}
+        <input type="hidden" name="token" value="{{ token }}">
+
+        {% if error %}
+            <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="adminId">Admin ID</label>
+            <input type="text" id="adminId" name="adminId" value="Auto-generated" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" value="{{ data.first_name|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" value="{{ data.last_name|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Choose a username" value="{{ data.username|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" value="{{ data.email|default:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="At least 12 characters" required>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" value="{{ data.confirmPassword|default:'' }}" required>
+        </div>
+
+        <button type="submit">REGISTER</button>
+    </form>
+
+    <div class="toggle-link">
+        Already have an account? <a href="{% url 'admin_login' %}">Log In</a>
+    </div>
+</div>
+
+</body>
+</html>

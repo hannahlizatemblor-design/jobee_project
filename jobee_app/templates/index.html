@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoBee - Graduates' Job Referral System</title>
+   
+    <style>
+        :root {
+            --primary-dark: #2c3e50;
+            --accent-blue: #007bff;
+            --bg-light: #f4f7f6;
+            --white: #ffffff;
+            --text-main: #333;
+            --text-muted: #666;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .landing-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-circle {
+            width: 200px;
+            height: 200px;
+            background-color: var(--white);
+            border: 1.5px solid #e1e1e1;
+            border-radius: 50%;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        .logo-circle img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin: 0 0 5px 0;
+            letter-spacing: 1px;
+            min-height: 1.2em; /* Keeps space if title is empty */
+        }
+
+        .system-title {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        /* Revised to match btn-primary but as a functional Link */
+        .btn-get-started {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex; /* Helps with centering text */
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .btn-get-started:hover {
+            background-color: #1a252f;
+            transform: scale(0.98);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            color: white; /* Ensures text stays white on hover */
+        }
+
+        .btn-get-started:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="landing-card">
+       
+        <div class="logo-circle">
+            <img src="{% static 'jobee_logo.png' %}" alt="JoBee Logo">
+        </div>
+
+        <h1 class="brand-title">JoBee</h1>
+
+        <div class="system-title">Graduates' Job Referral System</div>
+
+        <a href="{% url 'selection' %}" class="btn-get-started">
+            Get Started
+        </a>
+
+    </div>
+
+</body>
+</html>
+

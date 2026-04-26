@@ -1,0 +1,352 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoBee - Role Selection</title>
+    <style>
+        :root {
+            --primary-dark: #333333;
+            --bg-light: #f9f9f9;
+            --white: #ffffff;
+            --text-main: #000000;
+            --text-muted: #666666;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .selection-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 420px;
+            padding: 50px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .instruction-text {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+
+        .sub-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .role-btn {
+            display: block; /* Essential for <a> to behave like your original button */
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary-dark);
+            border: none;
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            outline: none;
+            text-decoration: none; /* Removes underline from link */
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .role-btn:hover {
+            background-color: #555555;
+            color: var(--white); /* Ensures text stays white */
+        }
+
+        .role-btn:active {
+            transform: translateY(1px);
+            background-color: #222222;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--white);
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+        }
+
+        .token-input-group {
+            margin-bottom: 15px;
+        }
+
+        .token-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .token-input:focus {
+            outline: none;
+            border-color: var(--primary-dark);
+        }
+
+        .token-help {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e1e1e1;
+        }
+
+        .login-link-text {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-link-text:hover {
+            color: #333333;
+            text-decoration: underline;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-btn-primary {
+            background-color: var(--primary-dark);
+            color: var(--white);
+        }
+
+        .modal-btn-primary:hover {
+            background-color: #555555;
+        }
+
+        .modal-btn-secondary {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid #e1e1e1;
+        }
+
+        .modal-btn-secondary:hover {
+            background-color: #f5f5f5;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: var(--text-main);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="selection-card">
+        {% if error %}
+        <div style="color: red; margin-bottom: 20px; font-size: 14px; background: #ffebee; padding: 10px; border-radius: 6px; border: 1px solid #ffcdd2;">{{ error }}</div>
+        {% endif %}
+       
+        <div class="instruction-text">Continue as:</div>
+        <div class="sub-text">Selection Mode</div>
+
+        <div class="btn-container">
+            <button type="button" class="role-btn" onclick="openAdminModal()">
+                Administrator
+            </button>
+           
+            <a href="{% url 'grad_signup' %}" class="role-btn">
+                Graduate
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Admin Token Modal -->
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeAdminModal()">&times;</button>
+            
+            <div class="modal-header">
+                <div class="modal-title">Admin Access</div>
+                <div class="modal-subtitle">Sign Up or Login</div>
+            </div>
+            
+            <form method="POST" action="{% url 'selection' %}" id="adminTokenForm">
+                {% csrf_token %}
+                <input type="hidden" name="user_type" value="admin">
+                
+                <div class="modal-body">
+                    <div class="token-input-group">
+                        <input type="text" name="admin_token" id="admin_token" class="token-input" 
+                               placeholder="Enter your invitation token" maxlength="10" required>
+                    </div>
+                    <div class="token-help">
+                        You need a valid invitation token from an existing administrator to create an admin account.
+                    </div>
+                    <div class="login-link">
+                        <a href="{% url 'admin_login' %}" class="login-link-text">Already have an account? Login</a>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn modal-btn-secondary" onclick="closeAdminModal()">Cancel</button>
+                    <button type="submit" class="modal-btn modal-btn-primary">Continue</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openAdminModal() {
+            document.getElementById('adminModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            setTimeout(() => {
+                document.getElementById('admin_token').focus();
+            }, 100);
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('adminModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeAdminModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && document.getElementById('adminModal').style.display === 'block') {
+                closeAdminModal();
+            }
+        });
+
+        // Auto-format token input (uppercase, limit length)
+        document.getElementById('admin_token').addEventListener('input', function(event) {
+            let value = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            event.target.value = value;
+        });
+    </script>
+
+</body>
+</html>

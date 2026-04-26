@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graduate Login - JoBee</title>
+    <style>
+        :root {
+            --primary-navy: #2C3E50;
+            --bg-light: #F4F7F9;
+            --white: #FFFFFF;
+            --text-main: #333;
+            --text-muted: #777;
+            --border-color: #E1E8EE;
+            --accent-blue: #007bff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-card {
+            background: var(--white);
+            width: 90%;
+            max-width: 400px;
+            padding: 45px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+            color: var(--primary-navy);
+        }
+
+        header p {
+            margin: 5px 0 30px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-navy);
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.05);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary-navy);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            margin: 10px 0 25px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-login:hover {
+            background-color: #1a252f;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .toggle-link {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .toggle-link a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .toggle-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <header>
+            <h1>Log In</h1>
+            <p>Graduate</p>
+        </header>
+
+        <form method="POST" action="{% url 'grad_login' %}">
+            {% csrf_token %}
+
+            {% if error %}
+                <div class="error-msg">{{ error }}</div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="grad_id">Graduate ID</label>
+                <input type="text" id="grad_id" name="grad_id" placeholder="Enter your Graduate ID" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            </div>
+
+            <button type="submit" class="btn-login">Log In</button>
+        </form>
+
+        <div class="toggle-link">
+            Don't have an account? <a href="{% url 'grad_signup' %}">Sign Up</a>
+        </div>
+    </div>
+
+</body>
+</html>

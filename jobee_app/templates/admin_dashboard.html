@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoBee Admin - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-navy: #1A2634;
+            --bg-light: #F0F4F8;
+            --white: #FFFFFF;
+            --text-main: #333;
+            --text-muted: #666;
+            --danger: #e74c3c;
+            --accent-blue: #007bff;
+            --border-color: #E1E8EE;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary-navy);
+        }
+
+        .content-view {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            padding-bottom: 80px;
+        }
+
+        .active-view { display: block; }
+
+        /* Job Card Styling */
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .job-card { padding: 20px; position: relative; }
+
+        .job-title { font-size: 28px; font-weight: bold; color: var(--text-main); margin-bottom: 8px; }
+        .job-company { font-size: 18px; color: var(--text-muted); margin-bottom: 15px; }
+
+        .notif-toggle-btn { position: absolute; right: 20px; top: 20px; background: #555555; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .notif-toggle-btn:hover { background: #333333; }
+
+        .job-field {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 5px;
+        }
+
+        .field-label { font-weight: 700; color: var(--text-muted); font-size: 11px; text-transform: uppercase; margin-bottom: 4px; }
+        .field-value { color: var(--text-main); font-size: 14px; }
+
+        /* Admin Form Styling */
+        .admin-form { 
+            background: var(--white); 
+            padding: 25px; 
+            border-radius: 12px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            box-sizing: border-box;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        
+        .admin-form input, .admin-form textarea, .admin-form select { 
+            padding: 12px; 
+            border: 1.5px solid var(--border-color); 
+            border-radius: 8px; 
+            font-size: 14px; 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
+        .admin-form textarea { height: 100px; resize: none; }
+
+        .btn-publish { 
+            padding: 16px; 
+            background: var(--primary-navy); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            margin-top: 10px;
+        }
+
+        .delete-btn { 
+            color: var(--danger); 
+            font-weight: bold; 
+            text-decoration: none; 
+            font-size: 12px; 
+            display: block; 
+            margin-top: 10px; 
+            text-align: right; 
+        }
+
+        .see-more-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .see-more-btn:hover {
+            background: #0056b3;
+        }
+
+        .additional-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Nav Bar */
+        nav.dashboard-nav {
+            background-color: var(--white);
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .nav-item { text-align: center; color: var(--text-muted); cursor: pointer; flex: 1; text-decoration: none; }
+        .nav-item.active { color: var(--primary-navy); }
+        .nav-item i { display: block; font-size: 20px; margin-bottom: 4px; }
+        .nav-item span { font-size: 10px; text-transform: uppercase; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <header><h1 id="view-title">Admin Dashboard</h1></header>
+
+    <div id="home" class="content-view active-view">
+        {% for job in jobs %}
+        <div class="card job-card">
+            <div class="job-title">{{ job.title }}</div>
+            <div class="job-company">{{ job.company }}</div>
+            <button class="notif-toggle-btn" onclick="toggleDetails(this)">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="additional-details" style="display: none;">
+                <div class="job-field"><div class="field-label">Job ID</div><div class="field-value">#{{ job.job_id }}</div></div>
+                <div class="job-field"><div class="field-label">Setup</div><div class="field-value" style="color:var(--primary-navy); font-weight:bold">{{ job.setup }}</div></div>
+                <div class="job-field"><div class="field-label">Location</div><div class="field-value">{{ job.location }}</div></div>
+                <div class="job-field"><div class="field-label">Source URL</div><div class="field-value"><a href="{{ job.url }}" target="_blank" rel="noopener noreferrer" style="color: var(--accent-blue); text-decoration: none;">Visit Source</a></div></div>
+                <div class="job-field" style="border:none"><div class="field-label">Description</div><div class="field-value">{{ job.description }}</div></div>
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align:center; margin-top:50px; color:#666;"><h3>No Jobs posted yet</h3></div>
+        {% endfor %}
+    </div>
+
+    <div id="add-job" class="content-view">
+        <form class="admin-form" method="POST" action="{% url 'admin_dashboard' %}">
+            {% csrf_token %}
+            <div class="form-group"><label>JOB TITLE</label><input type="text" name="title" placeholder="e.g. Web Developer" required></div>
+            <div class="form-group"><label>COMPANY NAME</label><input type="text" name="company" placeholder="Enter company" required></div>
+            <div class="form-group">
+                <label>SETUP</label>
+                <select name="setup" required>
+                    <option value="Online (WFH)">Online (WFH)</option>
+                    <option value="On field (Face-to-face)">On field (Face-to-face)</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+            </div>
+            <div class="form-group"><label>LOCATION</label><input type="text" name="location" placeholder="e.g. Clarin, Bohol" required></div>
+            <div class="form-group"><label>SOURCE URL</label><input type="url" name="url" placeholder="https://..." required></div>
+            <div class="form-group"><label>DESCRIPTION</label><textarea name="desc" placeholder="Brief details..." required></textarea></div>
+            <button type="submit" class="btn-publish">Publish Listing</button>
+        </form>
+    </div>
+
+    <div id="delete" class="content-view">
+        {% for job in jobs %}
+        <div class="card job-card" style="border: 1px dashed var(--danger);">
+            <div class="job-field"><div class="field-label">ID: {{ job.job_id }}</div><div class="field-value">{{ job.title }}</div></div>
+            <a href="{% url 'delete_job' job.job_id %}" class="delete-btn" onclick="return confirm('Confirm deletion of this listing?')">
+                <i class="fas fa-trash-alt"></i> REMOVE LISTING
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="profile" class="content-view">
+        <div class="card">
+            <div class="job-card">
+                <h2 style="margin-top:0;">Account Information</h2>
+                <div class="job-field"><div class="field-label">Admin ID</div><div class="field-value">{{ user_id }}</div></div>
+                <div class="job-field"><div class="field-label">Username</div><div class="field-value">{{ request.user.adminprofile.username }}</div></div>
+                <div class="job-field"><div class="field-label">Email</div><div class="field-value">{{ request.user.email }}</div></div>
+                <div class="job-field"><div class="field-label">Role</div><div class="field-value">Administrator</div></div>
+                
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                
+                <h3 style="margin: 20px 0 10px 0; color: var(--primary-navy);">Admin Management</h3>
+                <form method="POST" action="{% url 'generate_admin_token' %}" style="margin-bottom: 15px;">
+                    {% csrf_token %}
+                    <button type="submit" style="background: #555555; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">
+                        Generate Admin Invitation Token
+                    </button>
+                </form>
+                
+                {% if generated_token %}
+                <div style="background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                    <strong style="color: #2e7d32;">{{ success }}</strong><br>
+                    <span style="font-family: monospace; background: #f5f5f5; padding: 5px; border-radius: 3px; font-size: 16px; font-weight: bold; color: var(--primary-navy);">
+                        {{ generated_token }}
+                    </span><br>
+                    <small style="color: #666;">Share this token with the person you want to invite as an admin.</small>
+                </div>
+                {% endif %}
+                
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+                <a href="{% url 'logout' %}" class="menu-item" style="color:#e74c3c; text-decoration: none;">
+                    <span>Logout</span><i class="fas fa-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <nav class="dashboard-nav">
+        <div class="nav-item active" onclick="switchView('home', 'Job Listing Management', this)"><i class="fas fa-home"></i><span>Home</span></div>
+        <div class="nav-item" onclick="switchView('add-job', 'Post New Job', this)"><i class="fas fa-plus-circle"></i><span>Add Job</span></div>
+        <div class="nav-item" onclick="switchView('delete', 'Delete Listings', this)"><i class="fas fa-trash"></i><span>Delete</span></div>
+        <div class="nav-item" onclick="switchView('profile', 'Profile', this)"><i class="fas fa-user"></i><span>Profile</span></div>
+    </nav>
+
+    <script>
+        function switchView(viewId, title, element) {
+            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active-view'));
+            document.getElementById(viewId).classList.add('active-view');
+            document.getElementById('view-title').innerText = title;
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function toggleDetails(button) {
+            const details = button.nextElementSibling;
+            if (details.style.display === 'none' || details.style.display === '') {
+                details.style.display = 'block';
+                button.innerHTML = '<i class="fas fa-chevron-up"></i>';
+            } else {
+                details.style.display = 'none';
+                button.innerHTML = '<i class="fas fa-chevron-down"></i>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if generated_token %}
+                const profileTab = document.querySelector('nav.dashboard-nav .nav-item:last-child');
+                if (profileTab) {
+                    switchView('profile', 'Profile', profileTab);
+                }
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
