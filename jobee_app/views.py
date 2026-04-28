@@ -35,25 +35,37 @@ def selection(request):
 # --- 2. ADMIN SIDE ---
 def admin_signup(request):
     token = request.GET.get('token') or request.POST.get('token')
-    if not token and AdminProfile.objects.count() > 0:
-        return redirect('selection')  # No token and not first admin, redirect back
-    
+    first_admin = AdminProfile.objects.count() == 0
+
     if token:
         try:
             invitation = AdminInvitationToken.objects.get(token=token, used=False)
             if invitation.expires_at and invitation.expires_at < timezone.now():
-                return render(request, 'selection.html', {'error': 'Token has expired'})
+                return render(request, 'admin_signup.html', {
+                    'error': 'Token has expired',
+                    'token': token,
+                    'first_admin': first_admin
+                })
         except AdminInvitationToken.DoesNotExist:
-            return render(request, 'selection.html', {'error': 'Invalid token'})
-    
+            return render(request, 'admin_signup.html', {
+                'error': 'Invalid token',
+                'token': token,
+                'first_admin': first_admin
+            })
+    elif not first_admin:
+        return render(request, 'admin_signup.html', {
+            'error': 'Admin invitation token is required',
+            'first_admin': first_admin
+        })
+
     if request.method == "POST":
         data = request.POST
         if data['password'] != data['confirmPassword']:
-            return render(request, 'admin_signup.html', {'error': 'Passwords do not match', 'data': data, 'token': token})
+            return render(request, 'admin_signup.html', {'error': 'Passwords do not match', 'data': data, 'token': token, 'first_admin': first_admin})
         
         # Check if email already exists
         if User.objects.filter(username=data['email']).exists():
-            return render(request, 'admin_signup.html', {'error': 'An account with this email already exists. Please use a different email.', 'data': data, 'token': token})
+            return render(request, 'admin_signup.html', {'error': 'An account with this email already exists. Please use a different email.', 'data': data, 'token': token, 'first_admin': first_admin})
         
         # Create the Admin User
         user = User.objects.create_user(
@@ -83,7 +95,7 @@ def admin_signup(request):
         
         # Don't auto-login, redirect to success page
         return redirect(f'/registration-success/?type=admin&id={admin_profile.admin_id}')
-    return render(request, 'admin_signup.html', {'token': token})
+    return render(request, 'admin_signup.html', {'token': token, 'first_admin': first_admin})
 
 def admin_login(request):
     if request.method == "POST":
