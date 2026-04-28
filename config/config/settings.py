@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -80,10 +82,17 @@ WSGI_APPLICATION = 'config.config.wsgi.application'
 
 import dj_database_url
 
+#DATABASES = {
+    #'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+#}
+
 DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+    'default': dj_database_url.parse('mysql://avnadmin:AVNS_vSKvTjct8NuR0m1CWG4@mysql-12281cfa-hannahlizatemblor-ccfc.a.aivencloud.com:10978/defaultdb')
 }
 
+DATABASES['default']['OPTIONS'] = {
+    'ssl': {'ca': None} 
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
