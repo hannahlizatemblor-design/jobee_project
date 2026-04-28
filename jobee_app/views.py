@@ -37,7 +37,7 @@ def admin_signup(request):
     token = request.GET.get('token') or request.POST.get('token')
     first_admin = AdminProfile.objects.count() == 0
 
-    if token:
+    if token and not first_admin:
         try:
             invitation = AdminInvitationToken.objects.get(token=token, used=False)
             if invitation.expires_at and invitation.expires_at < timezone.now():
@@ -52,7 +52,7 @@ def admin_signup(request):
                 'token': token,
                 'first_admin': first_admin
             })
-    elif not first_admin:
+    elif not token and not first_admin:
         return render(request, 'admin_signup.html', {
             'error': 'Admin invitation token is required',
             'first_admin': first_admin
@@ -88,8 +88,8 @@ def admin_signup(request):
         # Get the created admin profile
         admin_profile = AdminProfile.objects.get(user=user)
         
-        # Mark token as used if provided
-        if token:
+        # Mark token as used if this is not the first admin
+        if token and not first_admin:
             invitation.used = True
             invitation.save()
         
