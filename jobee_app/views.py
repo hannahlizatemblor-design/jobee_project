@@ -13,33 +13,38 @@ def selection(request):
     if request.method == "POST":
         user_type = request.POST.get('user_type')
         if user_type == 'admin':
-            token = request.POST.get('admin_token')
-            if not token:
-                return render(request, 'selection.html', {'error': 'Admin token is required'})
-            try:
-                invitation = AdminInvitationToken.objects.get(token=token, used=False)
-                # Check if token has expired (optional)
-                if invitation.expires_at and invitation.expires_at < timezone.now():
-                    return render(request, 'selection.html', {'error': 'Token has expired'})
-                return redirect(f'/admin-signup/?token={token}')
-            except AdminInvitationToken.DoesNotExist:
-                return render(request, 'selection.html', {'error': 'Invalid or used token'})
+            if AdminProfile.objects.count() == 0:
+                # First admin, no token needed
+                return redirect('admin_signup')
+            else:
+                token = request.POST.get('admin_token')
+                if not token:
+                    return render(request, 'selection.html', {'error': 'Admin token is required'})
+                try:
+                    invitation = AdminInvitationToken.objects.get(token=token, used=False)
+                    # Check if token has expired (optional)
+                    if invitation.expires_at and invitation.expires_at < timezone.now():
+                        return render(request, 'selection.html', {'error': 'Token has expired'})
+                    return redirect(f'/admin-signup/?token={token}')
+                except AdminInvitationToken.DoesNotExist:
+                    return render(request, 'selection.html', {'error': 'Invalid or used token'})
         elif user_type == 'graduate':
             return redirect('grad_signup')
-    return render(request, 'selection.html')
+    return render(request, 'selection.html', {'first_admin': AdminProfile.objects.count() == 0})
 
 # --- 2. ADMIN SIDE ---
 def admin_signup(request):
     token = request.GET.get('token') or request.POST.get('token')
-    if not token:
-        return redirect('selection')  # No token, redirect back
+    if not token and AdminProfile.objects.count() > 0:
+        return redirect('selection')  # No token and not first admin, redirect back
     
-    try:
-        invitation = AdminInvitationToken.objects.get(token=token, used=False)
-        if invitation.expires_at and invitation.expires_at < timezone.now():
-            return render(request, 'selection.html', {'error': 'Token has expired'})
-    except AdminInvitationToken.DoesNotExist:
-        return render(request, 'selection.html', {'error': 'Invalid token'})
+    if token:
+        try:
+            invitation = AdminInvitationToken.objects.get(token=token, used=False)
+            if invitation.expires_at and invitation.expires_at < timezone.now():
+                return render(request, 'selection.html', {'error': 'Token has expired'})
+        except AdminInvitationToken.DoesNotExist:
+            return render(request, 'selection.html', {'error': 'Invalid token'})
     
     if request.method == "POST":
         data = request.POST
@@ -71,9 +76,10 @@ def admin_signup(request):
         # Get the created admin profile
         admin_profile = AdminProfile.objects.get(user=user)
         
-        # Mark token as used
-        invitation.used = True
-        invitation.save()
+        # Mark token as used if provided
+        if token:
+            invitation.used = True
+            invitation.save()
         
         # Don't auto-login, redirect to success page
         return redirect(f'/registration-success/?type=admin&id={admin_profile.admin_id}')

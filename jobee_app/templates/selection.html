@@ -267,9 +267,19 @@
         <div class="sub-text">Selection Mode</div>
 
         <div class="btn-container">
+            {% if first_admin %}
+            <form method="POST" action="{% url 'selection' %}">
+                {% csrf_token %}
+                <input type="hidden" name="user_type" value="admin">
+                <button type="submit" class="role-btn">
+                    Administrator
+                </button>
+            </form>
+            {% else %}
             <button type="button" class="role-btn" onclick="openAdminModal()">
                 Administrator
             </button>
+            {% endif %}
            
             <a href="{% url 'grad_signup' %}" class="role-btn">
                 Graduate
