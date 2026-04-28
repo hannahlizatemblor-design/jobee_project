@@ -28,8 +28,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-+xy)i4rhz&a5b!^v2#3+g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else []
-
+#ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else []
+ALLOWED_HOSTS = ['jobee-project.onrender.com', 'localhost', '127.0.0.1', '.onrender.com']
 
 # Application definition
 
